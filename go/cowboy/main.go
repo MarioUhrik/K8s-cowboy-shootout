@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type server struct {
@@ -55,7 +56,7 @@ func die() {
 }
 
 func shoot() {
-	conn, err := grpc.Dial("cowboys:8080")
+	conn, err := grpc.Dial("cowboys:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic(err)
 	}

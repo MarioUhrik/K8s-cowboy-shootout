@@ -28,8 +28,12 @@ var cowboy Cowboy
 var s grpc.Server
 
 func (s *server) GetShot(ctx context.Context, shooter *pb.Shooter) (*pb.Shooter, error) {
-	log.Printf("%s Got shot by %s", cowboy.name, shooter.Name)
+	if (cowboy.name == shooter.Name) {
+		log.Printf("%s didn't hit anyone", cowboy.name)
+		return shooter, nil
+	}
 
+	log.Printf("%s Got shot by %s", cowboy.name, shooter.Name)
 	cowboy.health = cowboy.health - shooter.Damage
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if (cowboy.health <= 0) {

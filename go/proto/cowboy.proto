@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "proto/pb";
+
+message Shooter {
+  string name = 1;
+  int32 health = 2;
+  int32 damage = 3;
+}
+
+message Empty {}
+
+service Cowboy {
+  rpc GetShot(Shooter) returns (Shooter) {}
+  rpc StartShooting(Empty) returns (Empty) {}
+  rpc GetDeclaredVictorious(Empty) returns (Empty) {}
+}

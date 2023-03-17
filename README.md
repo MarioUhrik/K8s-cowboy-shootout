@@ -1,4 +1,4 @@
-### K8s-cowboy-duel
-#Go/GRPC/K8s implementation of a wild west cowboy duel
+### K8s-cowboy-shootout
+Go/GRPC/K8s implementation of a wild west shootout between 2 or more cowboys
 
-![Architectural Diagram](k8s-cowboy-duel.png)
+![Architectural Diagram](k8s-cowboy-shootout.png)

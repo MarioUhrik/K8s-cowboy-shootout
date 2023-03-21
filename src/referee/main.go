@@ -14,15 +14,8 @@ import (
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type Cowboy struct {
-	name string `json:"name"`
-	health int32 `json:"health"`
-	damage int32 `json:"damage"`
-}
-
 var k8sConfig *rest.Config
 var k8sClientset *kubernetes.Clientset
-var cowboys []Cowboy
 var namespace string
 var cowboysReady bool = false
 var winnerFound bool = false
@@ -58,7 +51,7 @@ func getRemainingCowboyIPs() ([]string) {
 func waitForReadiness() {
 	log.Printf("Waiting for cowboy readiness")
 	for (!cowboysReady) {
-		if (len(getRemainingCowboyIPs()) == len(cowboys)) {
+		if (len(getRemainingCowboyIPs()) == len(listPods().Items)) {
 			cowboysReady = true
 			break
 		}
@@ -106,4 +99,5 @@ func main() {
 	waitForReadiness()
 	startDuel()
 	findWinner()
+
 }

@@ -33,7 +33,7 @@ func (s *server) GetShot(ctx context.Context, shooter *pb.Shooter) (*pb.Shooter,
 		return shooter, nil
 	}
 
-	log.Printf("%s Got shot by %s", cowboy.name, shooter.Name)
+	log.Printf("%s got shot by %s", cowboy.name, shooter.Name)
 	cowboy.health = cowboy.health - shooter.Damage
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if (cowboy.health <= 0) {

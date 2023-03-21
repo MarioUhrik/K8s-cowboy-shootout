@@ -114,8 +114,8 @@ func shootout() {
 	}
 }
 
-func victory() {
-	for cowboy.health > 0 {
+func postShootout() {
+	for true {
 		time.Sleep(3600 * time.Second)
 	}
 }
@@ -124,5 +124,5 @@ func main() {
 	getReady()
 	waitToStartShootout()
 	shootout()
-	victory()
+	postShootout()
 }

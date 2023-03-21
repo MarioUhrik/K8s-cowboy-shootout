@@ -94,10 +94,16 @@ func findWinner() {
 	}
 }
 
+func postShootout() { // TODO: use Kubernetes jobs instead?
+	for true {
+		time.Sleep(3600 * time.Second)
+	}
+}
+
 func main() {
 	initK8s()
 	waitForReadiness()
 	startDuel()
 	findWinner()
-
+	postShootout()
 }

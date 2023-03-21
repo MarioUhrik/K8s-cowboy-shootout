@@ -37,7 +37,7 @@ func (s *server) GetShot(ctx context.Context, shooter *pb.Shooter) (*pb.Shooter,
 	cowboy.health = cowboy.health - shooter.Damage
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if (cowboy.health <= 0) {
-		die()
+		defer die()
 	}
 
 	return shooter, nil
@@ -56,7 +56,7 @@ func (s *server) GetDeclaredVictorious(ctx context.Context, empty *pb.Empty) (*p
 
 func die() {
 	log.Printf("%s is dead", cowboy.name)
-	s.GracefulStop()
+	defer s.GracefulStop()
 }
 
 func shoot() {
@@ -114,7 +114,7 @@ func shootout() {
 	}
 }
 
-func postShootout() {
+func postShootout() { // TODO: use Kubernetes jobs instead? But the winner should stay awake
 	for true {
 		time.Sleep(3600 * time.Second)
 	}

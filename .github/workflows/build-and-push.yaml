@@ -8,7 +8,7 @@ on:
     branches: [master]
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ghcr.io/MarioUhrik
 
 jobs:
   build-and-push-image:
@@ -40,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: ${{ matrix.imageName }}
+          images: ${{ env.REGISTRY }}/${{ matrix.imageName }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
             type=schedule

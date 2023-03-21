@@ -37,7 +37,7 @@ func (s *server) GetShot(ctx context.Context, shooter *pb.Shooter) (*pb.Shooter,
 	cowboy.health = cowboy.health - shooter.Damage
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if (cowboy.health <= 0) {
-		defer die() // This causes a segmentation fault, possibly because we're shutting down the server while it's answering requests
+		die() // This may cause a segmentation fault, possibly because we're shutting down the server while it's answering requests
 	}
 
 	return shooter, nil
@@ -56,7 +56,7 @@ func (s *server) GetDeclaredVictorious(ctx context.Context, empty *pb.Empty) (*p
 
 func die() {
 	log.Printf("%s is dead", cowboy.name)
-	defer s.GracefulStop()
+	s.Stop()
 }
 
 func shoot() {

@@ -32,7 +32,7 @@ func initK8s() {
 	k8sConfig, _ = rest.InClusterConfig()
 	k8sClientset, _ = kubernetes.NewForConfig(k8sConfig)
 
-	namespace = os.Getenv("K8S_NAMESPACE") // TODO - define env variable in k8s manifest
+	namespace = os.Getenv("K8S_NAMESPACE")
 	log.Printf("Initialized")
 }
 
@@ -106,6 +106,4 @@ func main() {
 	waitForReadiness()
 	startDuel()
 	findWinner()
-	// TODO - helm templating for cowboy input file
-	// TODO - readiness probe for cowboys
 }

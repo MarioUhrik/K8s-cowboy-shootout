@@ -1,0 +1,48 @@
+{{- $cowboys := .Files.Get "cowboys.json" | fromJson -}}
+{{- range $cowboys }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cowboy-{{ .name }}
+  labels:
+    app: k8s-cowboy-shootout
+    microservice: cowboy
+spec:
+  containers:
+  - name: cowboy
+    image: ghcr.io/mariouhrik/k8s-cowboy-shootout/cowboy:latest
+    env:
+    - name: COWBOY_NAME
+      value: {{ .name }}
+    - name: COWBOY_HEALTH
+      value: {{ .health }}
+    - name: COWBOY_DAMAGE
+      value: {{ .damage }}
+    - name: K8S_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    ports:
+    - containerPort: 8080
+    readinessProbe:
+      tcpSocket:
+        port: 8080
+{{- end }} 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cowboys
+  labels:
+    app: k8s-cowboy-shootout
+    microservice: cowboy
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: k8s-cowboy-shootout
+    microservice: cowboy

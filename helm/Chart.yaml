@@ -1,0 +1,4 @@
+apiVersion: v3
+version: 1.0.0
+name: K8s-cowboy-shootout
+description: https://github.com/MarioUhrik/K8s-cowboy-shootout

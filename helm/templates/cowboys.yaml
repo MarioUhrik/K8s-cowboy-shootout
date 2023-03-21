@@ -28,6 +28,7 @@ spec:
     readinessProbe:
       tcpSocket:
         port: 8080
+      periodSeconds: 1
 ---
 {{- end }} 
 apiVersion: v1

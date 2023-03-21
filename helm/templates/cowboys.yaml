@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: cowboy-{{ .name }}
+  namespace: k8s-cowboy-shootout
   labels:
     app: k8s-cowboy-shootout
     microservice: cowboy
@@ -33,6 +34,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cowboys
+  namespace: k8s-cowboy-shootout
   labels:
     app: k8s-cowboy-shootout
     microservice: cowboy

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: referee
+  namespace: k8s-cowboy-shootout
   labels:
     app: k8s-cowboy-shootout
     microservice: referee

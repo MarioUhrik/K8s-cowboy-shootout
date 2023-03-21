@@ -27,12 +27,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          readinessProbe:
-            tcpSocket:
-              port: 8080
-          livenessProbe:
-            tcpSocket:
-              port: 8080
 ---
 apiVersion: v1
 kind: ServiceAccount

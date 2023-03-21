@@ -94,7 +94,7 @@ func findWinner() {
 	}
 }
 
-func postShootout() { // TODO: use Kubernetes jobs instead?
+func postShootout() { // TODO: use Kubernetes jobs or a retrypolicy=never instead?
 	for true {
 		time.Sleep(3600 * time.Second)
 	}

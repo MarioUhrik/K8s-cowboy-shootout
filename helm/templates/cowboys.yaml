@@ -9,6 +9,7 @@ metadata:
     app: k8s-cowboy-shootout
     microservice: cowboy
 spec:
+  restartPolicy: Never
   containers:
   - name: cowboy
     image: ghcr.io/mariouhrik/k8s-cowboy-shootout/cowboy:latest

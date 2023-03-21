@@ -109,14 +109,9 @@ func shootout() {
 		time.Sleep(1000 * time.Millisecond)
 		if (cowboy.isVictorious) {
 			log.Printf("%s is victorious! The fastest hand in the West.", cowboy.name)
+			time.Sleep(3600 * time.Second)
 			return
 		}
-	}
-}
-
-func postShootout() { // TODO: use Kubernetes jobs instead? But the winner should stay awake
-	for true {
-		time.Sleep(3600 * time.Second)
 	}
 }
 
@@ -124,5 +119,4 @@ func main() {
 	getReady()
 	waitToStartShootout()
 	shootout()
-	postShootout()
 }

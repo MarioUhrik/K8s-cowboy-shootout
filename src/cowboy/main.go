@@ -38,7 +38,7 @@ func (s *server) GetShot(ctx context.Context, shooter *pb.Shooter) (*pb.Shooter,
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if (cowboy.health <= 0) {
 		die() // This may cause a segmentation fault, possibly because we're shutting down the server while it's answering requests
-	}
+	} // This is potentially fixable by having die() set a global variable flag, and having the main function poll the value of that flag, calling GracefulStop() there
 
 	return shooter, nil
 }

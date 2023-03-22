@@ -100,7 +100,7 @@ func postShootout() { // TODO: use Kubernetes jobs or a retrypolicy=never instea
 	}
 }
 
-func main() {
+func main() { // TODO: Theoretically, all functionalities of the referee could be done by the cowboys themselves instead. Decomission the Referee
 	initK8s()
 	waitForReadiness()
 	startDuel()

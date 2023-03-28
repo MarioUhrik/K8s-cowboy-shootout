@@ -1,17 +1,18 @@
 package main
 
 import (
-	pb "github.com/MarioUhrik/K8s-cowboy-shootout/go/proto/pb"
 	"context"
 	"log"
-	"time"
 	"os"
+	"time"
+
+	pb "github.com/MarioUhrik/K8s-cowboy-shootout/go/proto/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 var k8sConfig *rest.Config
@@ -38,10 +39,10 @@ func listPods() *v1.PodList {
 	return podList
 }
 
-func getRemainingCowboyIPs() ([]string) {
+func getRemainingCowboyIPs() []string {
 	var podIPs []string
 	for _, pod := range listPods().Items {
-		if (pod.Status.ContainerStatuses[0].Ready) {
+		if pod.Status.ContainerStatuses[0].Ready {
 			podIPs = append(podIPs, pod.Status.PodIP)
 		}
 	}
@@ -50,8 +51,8 @@ func getRemainingCowboyIPs() ([]string) {
 
 func waitForReadiness() {
 	log.Printf("Waiting for cowboy readiness")
-	for (!cowboysReady) {
-		if (len(getRemainingCowboyIPs()) == len(listPods().Items)) {
+	for !cowboysReady {
+		if len(getRemainingCowboyIPs()) == len(listPods().Items) {
 			cowboysReady = true
 			break
 		}
@@ -75,9 +76,9 @@ func startDuel() {
 }
 
 func findWinner() {
-	for (!winnerFound) {
-		cowboyIPs := getRemainingCowboyIPs();
-		if (len(cowboyIPs) == 1) {
+	for !winnerFound {
+		cowboyIPs := getRemainingCowboyIPs()
+		if len(cowboyIPs) == 1 {
 			cowboyURL := cowboyIPs[0] + ":8080"
 			conn, err := grpc.Dial(cowboyURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {

@@ -8,7 +8,6 @@ import (
 
 	pb "github.com/MarioUhrik/K8s-cowboy-shootout/src/proto/pb"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -70,7 +69,7 @@ func startDuel() {
 	for _, cowboyIP := range getRemainingCowboyIPs() { // TODO: first establish all connections, then call RPCs all at the same time
 		cowboyURL := cowboyIP + ":8080"
 		log.Printf("Ordering cowboy %s to start shooting", cowboyURL)
-		conn, err := grpc.Dial(cowboyURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(cowboyURL, grpc.WithInsecure())
 		if err != nil {
 			log.Printf("Failed to Dial cowboy %s: %v", cowboyURL, err)
 			continue
@@ -94,7 +93,7 @@ func findWinner() {
 		cowboyIPs := getRemainingCowboyIPs()
 		if len(cowboyIPs) == 1 {
 			cowboyURL := cowboyIPs[0] + ":8080"
-			conn, err := grpc.Dial(cowboyURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+			conn, err := grpc.Dial(cowboyURL, grpc.WithInsecure())
 			if err != nil {
 				log.Panicf("Failed to Dial cowboy %s: %v", cowboyURL, err)
 			}

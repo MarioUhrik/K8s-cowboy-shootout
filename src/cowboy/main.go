@@ -27,6 +27,7 @@ type Cowboy struct {
 
 var cowboy Cowboy
 var s grpc.Server
+var triggerShutdown chan string
 
 func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.GetShotResponse, error) {
 	if cowboy.name == request.ShooterName {
@@ -38,8 +39,8 @@ func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.G
 	cowboy.health = cowboy.health - request.IncomingDamage
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if cowboy.health <= 0 {
-		die() // This may cause a segmentation fault, possibly because we're shutting down the server while it's answering requests
-	} // This is potentially fixable by having die() set a global variable flag, and having the main function poll the value of that flag, calling GracefulStop() there
+		die()
+	}
 
 	return &pb.GetShotResponse{VictimName: cowboy.name, RemainingHealth: cowboy.health}, nil
 }
@@ -57,7 +58,7 @@ func (s *server) GetDeclaredVictorious(ctx context.Context, request *pb.GetDecla
 
 func die() {
 	log.Printf("%s is dead", cowboy.name)
-	s.Stop()
+	triggerShutdown <- "Shutting down the GRPC server"
 }
 
 func shoot() {
@@ -96,12 +97,15 @@ func getReady() {
 		log.Panicf("Failed to listen on TCP port: %v", err)
 	}
 
+	triggerShutdown = make(chan string)
 	s := grpc.NewServer()
 	go func() {
 		pb.RegisterCowboyServer(s, &server{})
 		if err := s.Serve(listener); err != nil {
 			log.Panicf("Failed to serve: %v", err)
 		}
+		<-triggerShutdown
+		s.GracefulStop()
 	}()
 	log.Printf("%s is now ready", cowboy.name)
 }

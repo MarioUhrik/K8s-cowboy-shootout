@@ -23,9 +23,14 @@ var winnerFound bool = false
 
 func initK8s() {
 	log.Printf("Initializing")
-	k8sConfig, _ = rest.InClusterConfig()
-	k8sClientset, _ = kubernetes.NewForConfig(k8sConfig)
-
+	k8sConfig, err := rest.InClusterConfig()
+	if err != nil {
+		log.Panicf("Failed to load the InClusterConfig for Kubernetes: %v", err)
+	}
+	k8sClientset, err = kubernetes.NewForConfig(k8sConfig)
+	if err != nil {
+		log.Panicf("Failed to use the InClusterConfig for Kubernetes: %v", err)
+	}
 	namespace = os.Getenv("K8S_NAMESPACE")
 	log.Printf("Initialized")
 }
@@ -34,7 +39,7 @@ func listPods() *v1.PodList {
 	listOptions := meta_v1.ListOptions{LabelSelector: "microservice=cowboy"}
 	podList, err := k8sClientset.CoreV1().Pods(namespace).List(context.TODO(), listOptions)
 	if err != nil {
-		panic(err)
+		log.Panicf("Failed to list the cowboy pods: %v", err)
 	}
 	return podList
 }
@@ -64,14 +69,23 @@ func waitForReadiness() {
 func startDuel() {
 	for _, cowboyIP := range getRemainingCowboyIPs() { // TODO: first establish all connections, then call RPCs all at the same time
 		cowboyURL := cowboyIP + ":8080"
+		log.Printf("Ordering cowboy %s to start shooting", cowboyURL)
 		conn, err := grpc.Dial(cowboyURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
-			panic(err)
+			log.Printf("Failed to Dial cowboy %s: %v", cowboyURL, err)
+			continue
 		}
 		client := pb.NewCowboyClient(conn)
-		log.Printf("Ordering cowboy %s to start shooting", cowboyURL)
-		client.StartShooting(context.Background(), &pb.Empty{})
-		conn.Close()
+		_, err = client.StartShooting(context.Background(), &pb.Empty{})
+		if err != nil {
+			log.Printf("Failed to order cowboy %s to start shooting: %v", cowboyURL, err)
+			continue
+		}
+		err = conn.Close()
+		if err != nil {
+			log.Printf("Failed to close connection to cowboy %s after ordering him to start shooting: %v", cowboyURL, err)
+			continue
+		}
 	}
 }
 
@@ -82,12 +96,18 @@ func findWinner() {
 			cowboyURL := cowboyIPs[0] + ":8080"
 			conn, err := grpc.Dial(cowboyURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				panic(err)
+				log.Panicf("Failed to Dial cowboy %s: %v", cowboyURL, err)
 			}
 			client := pb.NewCowboyClient(conn)
 			log.Printf("Declaring cowboy %s the winner", cowboyURL)
-			client.GetDeclaredVictorious(context.Background(), &pb.Empty{})
+			_, err = client.GetDeclaredVictorious(context.Background(), &pb.Empty{})
+			if err != nil {
+				log.Panicf("Failed to declare cowboy %s victorious: %v", cowboyURL, err)
+			}
 			conn.Close()
+			if err != nil {
+				log.Printf("Failed to close connection to cowboy %s after declaring him victorious: %v", cowboyURL, err)
+			}
 			winnerFound = true
 			break
 		}

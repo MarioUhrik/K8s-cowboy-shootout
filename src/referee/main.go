@@ -76,7 +76,7 @@ func startDuel() {
 			continue
 		}
 		client := pb.NewCowboyClient(conn)
-		_, err = client.StartShooting(context.Background(), &pb.Empty{})
+		_, err = client.StartShooting(context.Background(), &pb.StartShootingRequest{})
 		if err != nil {
 			log.Printf("Failed to order cowboy %s to start shooting: %v", cowboyURL, err)
 			continue
@@ -100,7 +100,7 @@ func findWinner() {
 			}
 			client := pb.NewCowboyClient(conn)
 			log.Printf("Declaring cowboy %s the winner", cowboyURL)
-			_, err = client.GetDeclaredVictorious(context.Background(), &pb.Empty{})
+			_, err = client.GetDeclaredVictorious(context.Background(), &pb.GetDeclaredVictoriousRequest{})
 			if err != nil {
 				log.Panicf("Failed to declare cowboy %s victorious: %v", cowboyURL, err)
 			}

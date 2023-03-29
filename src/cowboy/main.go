@@ -28,31 +28,31 @@ type Cowboy struct {
 var cowboy Cowboy
 var s grpc.Server
 
-func (s *server) GetShot(ctx context.Context, shooter *pb.Shooter) (*pb.Shooter, error) {
-	if cowboy.name == shooter.Name {
+func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.GetShotResponse, error) {
+	if cowboy.name == request.ShooterName {
 		log.Printf("%s didn't hit anyone", cowboy.name)
-		return shooter, nil
+		return &pb.GetShotResponse{VictimName: cowboy.name, RemainingHealth: cowboy.health}, nil
 	}
 
-	log.Printf("%s got shot by %s", cowboy.name, shooter.Name)
-	cowboy.health = cowboy.health - shooter.Damage
+	log.Printf("%s got shot by %s", cowboy.name, request.ShooterName)
+	cowboy.health = cowboy.health - request.IncomingDamage
 	log.Printf("%s has %d health left", cowboy.name, cowboy.health)
 	if cowboy.health <= 0 {
 		die() // This may cause a segmentation fault, possibly because we're shutting down the server while it's answering requests
 	} // This is potentially fixable by having die() set a global variable flag, and having the main function poll the value of that flag, calling GracefulStop() there
 
-	return shooter, nil
+	return &pb.GetShotResponse{VictimName: cowboy.name, RemainingHealth: cowboy.health}, nil
 }
 
-func (s *server) StartShooting(ctx context.Context, empty *pb.Empty) (*pb.Empty, error) {
+func (s *server) StartShooting(ctx context.Context, request *pb.StartShootingRequest) (*pb.StartShootingResponse, error) {
 	cowboy.isInCombat = true
-	return empty, nil
+	return &pb.StartShootingResponse{}, nil
 }
 
-func (s *server) GetDeclaredVictorious(ctx context.Context, empty *pb.Empty) (*pb.Empty, error) {
+func (s *server) GetDeclaredVictorious(ctx context.Context, request *pb.GetDeclaredVictoriousRequest) (*pb.GetDeclaredVictoriousResponse, error) {
 	cowboy.isVictorious = true
 	cowboy.isInCombat = false
-	return empty, nil
+	return &pb.GetDeclaredVictoriousResponse{}, nil
 }
 
 func die() {
@@ -68,7 +68,7 @@ func shoot() {
 	}
 	client := pb.NewCowboyClient(conn)
 	log.Printf("%s shoots", cowboy.name)
-	_, err = client.GetShot(context.Background(), &pb.Shooter{Name: cowboy.name, Health: cowboy.health, Damage: cowboy.damage})
+	_, err = client.GetShot(context.Background(), &pb.GetShotRequest{ShooterName: cowboy.name, IncomingDamage: cowboy.damage})
 	if err != nil {
 		log.Panicf("Failed to hit target cowboy while shooting: %v", err)
 	}

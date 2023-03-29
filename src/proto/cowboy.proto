@@ -2,16 +2,23 @@ syntax = "proto3";
 
 option go_package = "proto/pb";
 
-message Shooter {
-  string name = 1;
-  int32 health = 2;
-  int32 damage = 3;
+message GetShotRequest {
+  string shooterName = 1;
+  int32 incomingDamage = 2;
+}
+message GetShotResponse {
+  string victimName = 1;
+  int32 remainingHealth = 2;
 }
 
-message Empty {}
+message StartShootingRequest {}
+message StartShootingResponse {}
+
+message GetDeclaredVictoriousRequest {}
+message GetDeclaredVictoriousResponse {}
 
 service Cowboy {
-  rpc GetShot(Shooter) returns (Shooter) {}
-  rpc StartShooting(Empty) returns (Empty) {}
-  rpc GetDeclaredVictorious(Empty) returns (Empty) {}
+  rpc GetShot(GetShotRequest) returns (GetShotResponse) {}
+  rpc StartShooting(StartShootingRequest) returns (StartShootingResponse) {}
+  rpc GetDeclaredVictorious(GetDeclaredVictoriousRequest) returns (GetDeclaredVictoriousResponse) {}
 }

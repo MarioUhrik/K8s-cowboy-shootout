@@ -28,9 +28,9 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CowboyClient interface {
-	GetShot(ctx context.Context, in *Shooter, opts ...grpc.CallOption) (*Shooter, error)
-	StartShooting(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
-	GetDeclaredVictorious(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	GetShot(ctx context.Context, in *GetShotRequest, opts ...grpc.CallOption) (*GetShotResponse, error)
+	StartShooting(ctx context.Context, in *StartShootingRequest, opts ...grpc.CallOption) (*StartShootingResponse, error)
+	GetDeclaredVictorious(ctx context.Context, in *GetDeclaredVictoriousRequest, opts ...grpc.CallOption) (*GetDeclaredVictoriousResponse, error)
 }
 
 type cowboyClient struct {
@@ -41,8 +41,8 @@ func NewCowboyClient(cc grpc.ClientConnInterface) CowboyClient {
 	return &cowboyClient{cc}
 }
 
-func (c *cowboyClient) GetShot(ctx context.Context, in *Shooter, opts ...grpc.CallOption) (*Shooter, error) {
-	out := new(Shooter)
+func (c *cowboyClient) GetShot(ctx context.Context, in *GetShotRequest, opts ...grpc.CallOption) (*GetShotResponse, error) {
+	out := new(GetShotResponse)
 	err := c.cc.Invoke(ctx, Cowboy_GetShot_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -50,8 +50,8 @@ func (c *cowboyClient) GetShot(ctx context.Context, in *Shooter, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *cowboyClient) StartShooting(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *cowboyClient) StartShooting(ctx context.Context, in *StartShootingRequest, opts ...grpc.CallOption) (*StartShootingResponse, error) {
+	out := new(StartShootingResponse)
 	err := c.cc.Invoke(ctx, Cowboy_StartShooting_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -59,8 +59,8 @@ func (c *cowboyClient) StartShooting(ctx context.Context, in *Empty, opts ...grp
 	return out, nil
 }
 
-func (c *cowboyClient) GetDeclaredVictorious(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
-	out := new(Empty)
+func (c *cowboyClient) GetDeclaredVictorious(ctx context.Context, in *GetDeclaredVictoriousRequest, opts ...grpc.CallOption) (*GetDeclaredVictoriousResponse, error) {
+	out := new(GetDeclaredVictoriousResponse)
 	err := c.cc.Invoke(ctx, Cowboy_GetDeclaredVictorious_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -72,9 +72,9 @@ func (c *cowboyClient) GetDeclaredVictorious(ctx context.Context, in *Empty, opt
 // All implementations must embed UnimplementedCowboyServer
 // for forward compatibility
 type CowboyServer interface {
-	GetShot(context.Context, *Shooter) (*Shooter, error)
-	StartShooting(context.Context, *Empty) (*Empty, error)
-	GetDeclaredVictorious(context.Context, *Empty) (*Empty, error)
+	GetShot(context.Context, *GetShotRequest) (*GetShotResponse, error)
+	StartShooting(context.Context, *StartShootingRequest) (*StartShootingResponse, error)
+	GetDeclaredVictorious(context.Context, *GetDeclaredVictoriousRequest) (*GetDeclaredVictoriousResponse, error)
 	mustEmbedUnimplementedCowboyServer()
 }
 
@@ -82,13 +82,13 @@ type CowboyServer interface {
 type UnimplementedCowboyServer struct {
 }
 
-func (UnimplementedCowboyServer) GetShot(context.Context, *Shooter) (*Shooter, error) {
+func (UnimplementedCowboyServer) GetShot(context.Context, *GetShotRequest) (*GetShotResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetShot not implemented")
 }
-func (UnimplementedCowboyServer) StartShooting(context.Context, *Empty) (*Empty, error) {
+func (UnimplementedCowboyServer) StartShooting(context.Context, *StartShootingRequest) (*StartShootingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartShooting not implemented")
 }
-func (UnimplementedCowboyServer) GetDeclaredVictorious(context.Context, *Empty) (*Empty, error) {
+func (UnimplementedCowboyServer) GetDeclaredVictorious(context.Context, *GetDeclaredVictoriousRequest) (*GetDeclaredVictoriousResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDeclaredVictorious not implemented")
 }
 func (UnimplementedCowboyServer) mustEmbedUnimplementedCowboyServer() {}
@@ -105,7 +105,7 @@ func RegisterCowboyServer(s grpc.ServiceRegistrar, srv CowboyServer) {
 }
 
 func _Cowboy_GetShot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Shooter)
+	in := new(GetShotRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -117,13 +117,13 @@ func _Cowboy_GetShot_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: Cowboy_GetShot_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CowboyServer).GetShot(ctx, req.(*Shooter))
+		return srv.(CowboyServer).GetShot(ctx, req.(*GetShotRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Cowboy_StartShooting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(StartShootingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -135,13 +135,13 @@ func _Cowboy_StartShooting_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: Cowboy_StartShooting_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CowboyServer).StartShooting(ctx, req.(*Empty))
+		return srv.(CowboyServer).StartShooting(ctx, req.(*StartShootingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Cowboy_GetDeclaredVictorious_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(GetDeclaredVictoriousRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -153,7 +153,7 @@ func _Cowboy_GetDeclaredVictorious_Handler(srv interface{}, ctx context.Context,
 		FullMethod: Cowboy_GetDeclaredVictorious_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CowboyServer).GetDeclaredVictorious(ctx, req.(*Empty))
+		return srv.(CowboyServer).GetDeclaredVictorious(ctx, req.(*GetDeclaredVictoriousRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

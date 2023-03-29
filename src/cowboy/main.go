@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	pb "github.com/MarioUhrik/K8s-cowboy-shootout/go/proto/pb"
+	pb "github.com/MarioUhrik/K8s-cowboy-shootout/src/proto/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

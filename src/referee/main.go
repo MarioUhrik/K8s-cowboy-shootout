@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	pb "github.com/MarioUhrik/K8s-cowboy-shootout/go/proto/pb"
+	pb "github.com/MarioUhrik/K8s-cowboy-shootout/src/proto/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	v1 "k8s.io/api/core/v1"

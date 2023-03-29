@@ -4,6 +4,8 @@ github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230319001853-89f6c79a5b6a h1:
 github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230319001853-89f6c79a5b6a/go.mod h1:LaDq2CHRoMxEb4mAim+nvs+sbAghhOOHUbG+iIMumlA=
 github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329125522-7c763d03f416 h1:F5R3MWQ1MxtRIpLKs9cCi6dgkthKSN91WVaAbRDU0RM=
 github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329125522-7c763d03f416/go.mod h1:LaDq2CHRoMxEb4mAim+nvs+sbAghhOOHUbG+iIMumlA=
+github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329130054-d5a40c201f32 h1:7wj8svdhIu4z55BIeNUeI8+iNLXN38xufYnCVurrwqo=
+github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329130054-d5a40c201f32/go.mod h1:LaDq2CHRoMxEb4mAim+nvs+sbAghhOOHUbG+iIMumlA=
 github.com/bcreane/k8sutils v0.0.0-20180511025317-8a5c9acd3a9e h1:TF4bxZR1TXKYZUw9WcQeCU1mqWcIZm265R38Fsd3GBI=
 github.com/bcreane/k8sutils v0.0.0-20180511025317-8a5c9acd3a9e/go.mod h1:F2bJwTJcNtzf/4UeGTaPHtcKdHjacaRxoJQM7wCsK4g=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=

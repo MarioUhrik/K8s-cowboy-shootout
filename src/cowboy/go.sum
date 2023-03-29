@@ -1,5 +1,7 @@
 github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230317221758-f98f42402871 h1:rR5n1EMCT6zPJ/z/9iA+Vqkc63oCR9Fpmds14hNGZ3I=
 github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230317221758-f98f42402871/go.mod h1:LaDq2CHRoMxEb4mAim+nvs+sbAghhOOHUbG+iIMumlA=
+github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329130054-d5a40c201f32 h1:7wj8svdhIu4z55BIeNUeI8+iNLXN38xufYnCVurrwqo=
+github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329130054-d5a40c201f32/go.mod h1:LaDq2CHRoMxEb4mAim+nvs+sbAghhOOHUbG+iIMumlA=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/golang/protobuf v1.5.3 h1:KhyjKVUg7Usr/dYsdSqoFveMYd5ko72D+zANwlG1mmg=
 github.com/golang/protobuf v1.5.3/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=

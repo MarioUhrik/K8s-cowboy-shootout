@@ -3,7 +3,7 @@ module referee
 go 1.20
 
 require (
-	github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329125522-7c763d03f416 // indirect
+	github.com/MarioUhrik/K8s-cowboy-shootout v0.0.0-20230329130054-d5a40c201f32 // indirect
 	github.com/bcreane/k8sutils v0.0.0-20180511025317-8a5c9acd3a9e // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect

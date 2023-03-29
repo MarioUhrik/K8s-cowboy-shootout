@@ -62,7 +62,7 @@ func die() {
 }
 
 func shoot() {
-	conn, err := grpc.Dial("cowboys:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("cowboys:8080", grpc.WithTimeout(100*time.Millisecond), grpc.WithInsecure())
 	if err != nil {
 		log.Printf("Failed to Dial cowboy while shooting: %v", err)
 		return

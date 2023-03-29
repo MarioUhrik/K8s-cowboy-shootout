@@ -71,7 +71,7 @@ func shoot() {
 	log.Printf("%s shoots", cowboy.name)
 	_, err = client.GetShot(context.Background(), &pb.GetShotRequest{ShooterName: cowboy.name, IncomingDamage: cowboy.damage})
 	if err != nil {
-		log.Panicf("Failed to hit target cowboy while shooting: %v", err)
+		log.Printf("Failed to hit target cowboy while shooting: %v", err)
 	}
 	conn.Close()
 }

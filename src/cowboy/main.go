@@ -105,6 +105,7 @@ func getReady() {
 		}
 		<-triggerShutdown
 		s.GracefulStop()
+		listener.Close()
 	}()
 	log.Printf("%s is now ready", cowboy.name)
 }

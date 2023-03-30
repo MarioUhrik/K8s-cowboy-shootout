@@ -66,25 +66,27 @@ func waitForReadiness() {
 }
 
 func startDuel() {
-	for _, cowboyIP := range getRemainingCowboyIPs() { // TODO: first establish all connections, then call RPCs all at the same time
-		cowboyURL := cowboyIP + ":8080"
-		log.Printf("Ordering cowboy %s to start shooting", cowboyURL)
-		conn, err := grpc.Dial(cowboyURL, grpc.WithInsecure())
-		if err != nil {
-			log.Printf("Failed to Dial cowboy %s: %v", cowboyURL, err)
-			continue
-		}
-		client := pb.NewCowboyClient(conn)
-		_, err = client.StartShooting(context.Background(), &pb.StartShootingRequest{})
-		if err != nil {
-			log.Printf("Failed to order cowboy %s to start shooting: %v", cowboyURL, err)
-			continue
-		}
-		err = conn.Close()
-		if err != nil {
-			log.Printf("Failed to close connection to cowboy %s after ordering him to start shooting: %v", cowboyURL, err)
-			continue
-		}
+	for _, cowboyIP := range getRemainingCowboyIPs() {
+		go func(cowboyIP string) {
+			cowboyURL := cowboyIP + ":8080"
+			log.Printf("Ordering cowboy %s to start shooting", cowboyURL)
+			conn, err := grpc.Dial(cowboyURL, grpc.WithInsecure())
+			if err != nil {
+				log.Printf("Failed to Dial cowboy %s: %v", cowboyURL, err)
+				return
+			}
+			client := pb.NewCowboyClient(conn)
+			_, err = client.StartShooting(context.Background(), &pb.StartShootingRequest{})
+			if err != nil {
+				log.Printf("Failed to order cowboy %s to start shooting: %v", cowboyURL, err)
+				return
+			}
+			err = conn.Close()
+			if err != nil {
+				log.Printf("Failed to close connection to cowboy %s after ordering him to start shooting: %v", cowboyURL, err)
+				return
+			}
+		}(cowboyIP)
 	}
 }
 

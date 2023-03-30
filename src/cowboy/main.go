@@ -10,6 +10,9 @@ import (
 
 	pb "github.com/MarioUhrik/K8s-cowboy-shootout/src/proto/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 type server struct {
@@ -76,18 +79,18 @@ func shoot() {
 }
 
 func getReady() {
-	health, err := strconv.Atoi(os.Getenv("COWBOY_HEALTH"))
+	cowboyHealth, err := strconv.Atoi(os.Getenv("COWBOY_HEALTH"))
 	if err != nil {
 		log.Panicf("Failed to parse COWBOY_HEALTH env variable: %v", err)
 	}
-	damage, err := strconv.Atoi(os.Getenv("COWBOY_DAMAGE"))
+	cowboyDamage, err := strconv.Atoi(os.Getenv("COWBOY_DAMAGE"))
 	if err != nil {
 		log.Panicf("Failed to parse COWBOY_DAMAGE env variable: %v", err)
 	}
 
 	cowboy.name = os.Getenv("COWBOY_NAME")
-	cowboy.health = int32(health)
-	cowboy.damage = int32(damage)
+	cowboy.health = int32(cowboyHealth)
+	cowboy.damage = int32(cowboyDamage)
 	cowboy.isInCombat = false
 	cowboy.isVictorious = false
 
@@ -100,6 +103,9 @@ func getReady() {
 	s := grpc.NewServer()
 	go func() {
 		pb.RegisterCowboyServer(s, &server{})
+		healthServer := health.NewServer()
+		healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+		healthgrpc.RegisterHealthServer(s, healthServer)
 		if err := s.Serve(listener); err != nil {
 			log.Panicf("Failed to serve: %v", err)
 		}

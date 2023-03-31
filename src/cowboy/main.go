@@ -24,11 +24,9 @@ type server struct {
 }
 
 type Cowboy struct {
-	name         string
-	health       int32
-	damage       int32
-	isInCombat   bool
-	isVictorious bool
+	name   string
+	health int32
+	damage int32
 }
 
 var cowboy Cowboy
@@ -39,8 +37,6 @@ var triggerShutdown chan string
 var k8sConfig *rest.Config
 var k8sClientset *kubernetes.Clientset
 var namespace string
-var cowboysReady bool = false
-var winnerFound bool = false
 
 func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.GetShotResponse, error) {
 	if cowboy.name == request.ShooterName {
@@ -130,8 +126,6 @@ func getReady() {
 	cowboy.name = os.Getenv("COWBOY_NAME")
 	cowboy.health = int32(cowboyHealth)
 	cowboy.damage = int32(cowboyDamage)
-	cowboy.isInCombat = false
-	cowboy.isVictorious = false
 
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
@@ -156,10 +150,11 @@ func getReady() {
 }
 
 func waitForReadiness() {
-	for !cowboysReady {
+	ready := false
+	for !ready {
 		time.Sleep(1 * time.Second)
 		if len(getRemainingCowboyIPs()) == len(listPods().Items) {
-			cowboysReady = true
+			ready = true
 		}
 	}
 }

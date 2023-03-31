@@ -75,7 +75,7 @@ func getRemainingCowboyIPs() []string {
 }
 
 func isVictorious() bool {
-	return len(getRemainingCowboyIPs()) == 1
+	return cowboy.health > 0 && len(getRemainingCowboyIPs()) == 1
 }
 
 func die() {

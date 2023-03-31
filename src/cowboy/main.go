@@ -56,7 +56,6 @@ func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.G
 
 func listPods() *v1.PodList {
 	listOptions := meta_v1.ListOptions{LabelSelector: "microservice=cowboy"}
-	log.Printf("DEBUG: About to request the list of pods")
 	podList, err := k8sClientset.CoreV1().Pods(namespace).List(context.TODO(), listOptions)
 	if err != nil {
 		log.Panicf("Failed to list the cowboy pods: %v", err)
@@ -159,9 +158,7 @@ func waitForReadiness() {
 
 func shootout() {
 	for cowboy.health > 0 {
-		log.Printf("DEBUG: About to shoot")
 		shoot()
-		log.Printf("DEBUG: About to check for victory")
 		time.Sleep(1000 * time.Millisecond)
 		if isVictorious() {
 			log.Printf("%s is victorious! The fastest hand in the West.", cowboy.name)

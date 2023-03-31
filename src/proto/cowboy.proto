@@ -11,14 +11,6 @@ message GetShotResponse {
   int32 remainingHealth = 2;
 }
 
-message StartShootingRequest {}
-message StartShootingResponse {}
-
-message GetDeclaredVictoriousRequest {}
-message GetDeclaredVictoriousResponse {}
-
 service Cowboy {
   rpc GetShot(GetShotRequest) returns (GetShotResponse) {}
-  rpc StartShooting(StartShootingRequest) returns (StartShootingResponse) {}
-  rpc GetDeclaredVictorious(GetDeclaredVictoriousRequest) returns (GetDeclaredVictoriousResponse) {}
 }

@@ -19,9 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Cowboy_GetShot_FullMethodName               = "/Cowboy/GetShot"
-	Cowboy_StartShooting_FullMethodName         = "/Cowboy/StartShooting"
-	Cowboy_GetDeclaredVictorious_FullMethodName = "/Cowboy/GetDeclaredVictorious"
+	Cowboy_GetShot_FullMethodName = "/Cowboy/GetShot"
 )
 
 // CowboyClient is the client API for Cowboy service.
@@ -29,8 +27,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CowboyClient interface {
 	GetShot(ctx context.Context, in *GetShotRequest, opts ...grpc.CallOption) (*GetShotResponse, error)
-	StartShooting(ctx context.Context, in *StartShootingRequest, opts ...grpc.CallOption) (*StartShootingResponse, error)
-	GetDeclaredVictorious(ctx context.Context, in *GetDeclaredVictoriousRequest, opts ...grpc.CallOption) (*GetDeclaredVictoriousResponse, error)
 }
 
 type cowboyClient struct {
@@ -50,31 +46,11 @@ func (c *cowboyClient) GetShot(ctx context.Context, in *GetShotRequest, opts ...
 	return out, nil
 }
 
-func (c *cowboyClient) StartShooting(ctx context.Context, in *StartShootingRequest, opts ...grpc.CallOption) (*StartShootingResponse, error) {
-	out := new(StartShootingResponse)
-	err := c.cc.Invoke(ctx, Cowboy_StartShooting_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *cowboyClient) GetDeclaredVictorious(ctx context.Context, in *GetDeclaredVictoriousRequest, opts ...grpc.CallOption) (*GetDeclaredVictoriousResponse, error) {
-	out := new(GetDeclaredVictoriousResponse)
-	err := c.cc.Invoke(ctx, Cowboy_GetDeclaredVictorious_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CowboyServer is the server API for Cowboy service.
 // All implementations must embed UnimplementedCowboyServer
 // for forward compatibility
 type CowboyServer interface {
 	GetShot(context.Context, *GetShotRequest) (*GetShotResponse, error)
-	StartShooting(context.Context, *StartShootingRequest) (*StartShootingResponse, error)
-	GetDeclaredVictorious(context.Context, *GetDeclaredVictoriousRequest) (*GetDeclaredVictoriousResponse, error)
 	mustEmbedUnimplementedCowboyServer()
 }
 
@@ -84,12 +60,6 @@ type UnimplementedCowboyServer struct {
 
 func (UnimplementedCowboyServer) GetShot(context.Context, *GetShotRequest) (*GetShotResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetShot not implemented")
-}
-func (UnimplementedCowboyServer) StartShooting(context.Context, *StartShootingRequest) (*StartShootingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StartShooting not implemented")
-}
-func (UnimplementedCowboyServer) GetDeclaredVictorious(context.Context, *GetDeclaredVictoriousRequest) (*GetDeclaredVictoriousResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDeclaredVictorious not implemented")
 }
 func (UnimplementedCowboyServer) mustEmbedUnimplementedCowboyServer() {}
 
@@ -122,42 +92,6 @@ func _Cowboy_GetShot_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Cowboy_StartShooting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StartShootingRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CowboyServer).StartShooting(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Cowboy_StartShooting_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CowboyServer).StartShooting(ctx, req.(*StartShootingRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Cowboy_GetDeclaredVictorious_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDeclaredVictoriousRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CowboyServer).GetDeclaredVictorious(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: Cowboy_GetDeclaredVictorious_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CowboyServer).GetDeclaredVictorious(ctx, req.(*GetDeclaredVictoriousRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Cowboy_ServiceDesc is the grpc.ServiceDesc for Cowboy service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -168,14 +102,6 @@ var Cowboy_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetShot",
 			Handler:    _Cowboy_GetShot_Handler,
-		},
-		{
-			MethodName: "StartShooting",
-			Handler:    _Cowboy_StartShooting_Handler,
-		},
-		{
-			MethodName: "GetDeclaredVictorious",
-			Handler:    _Cowboy_GetDeclaredVictorious_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -19,8 +19,6 @@ jobs:
         include:
           - context: ./src/cowboy
             imageName: k8s-cowboy-shootout/cowboy
-          - context: ./src/referee
-            imageName: k8s-cowboy-shootout/referee
     permissions:
       contents: read
       packages: write

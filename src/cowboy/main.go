@@ -13,6 +13,10 @@ import (
 	"google.golang.org/grpc/health"
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	v1 "k8s.io/api/core/v1"
+	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 )
 
 type server struct {
@@ -32,6 +36,12 @@ var s grpc.Server
 var healthServer *health.Server
 var triggerShutdown chan string
 
+var k8sConfig *rest.Config
+var k8sClientset *kubernetes.Clientset
+var namespace string
+var cowboysReady bool = false
+var winnerFound bool = false
+
 func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.GetShotResponse, error) {
 	if cowboy.name == request.ShooterName {
 		log.Printf("%s didn't hit anyone", cowboy.name)
@@ -48,15 +58,31 @@ func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.G
 	return &pb.GetShotResponse{VictimName: cowboy.name, RemainingHealth: cowboy.health}, nil
 }
 
-func (s *server) StartShooting(ctx context.Context, request *pb.StartShootingRequest) (*pb.StartShootingResponse, error) {
-	cowboy.isInCombat = true
-	return &pb.StartShootingResponse{}, nil
+func listPods() *v1.PodList {
+	listOptions := meta_v1.ListOptions{LabelSelector: "microservice=cowboy"}
+	podList, err := k8sClientset.CoreV1().Pods(namespace).List(context.TODO(), listOptions)
+	if err != nil {
+		log.Panicf("Failed to list the cowboy pods: %v", err)
+	}
+	return podList
 }
 
-func (s *server) GetDeclaredVictorious(ctx context.Context, request *pb.GetDeclaredVictoriousRequest) (*pb.GetDeclaredVictoriousResponse, error) {
-	cowboy.isVictorious = true
-	cowboy.isInCombat = false
-	return &pb.GetDeclaredVictoriousResponse{}, nil
+func getRemainingCowboyIPs() []string {
+	var podIPs []string
+	for _, pod := range listPods().Items {
+		if pod.Status.ContainerStatuses[0].Ready {
+			podIPs = append(podIPs, pod.Status.PodIP)
+		}
+	}
+	return podIPs
+}
+
+func isVictorious() bool {
+	cowboyIPs := getRemainingCowboyIPs()
+	if len(cowboyIPs) == 1 {
+		return true
+	}
+	return false
 }
 
 func die() {
@@ -82,6 +108,16 @@ func shoot() {
 }
 
 func getReady() {
+	k8sConfig, err := rest.InClusterConfig()
+	if err != nil {
+		log.Panicf("Failed to load the InClusterConfig for Kubernetes: %v", err)
+	}
+	k8sClientset, err = kubernetes.NewForConfig(k8sConfig)
+	if err != nil {
+		log.Panicf("Failed to use the InClusterConfig for Kubernetes: %v", err)
+	}
+	namespace = os.Getenv("K8S_NAMESPACE")
+
 	cowboyHealth, err := strconv.Atoi(os.Getenv("COWBOY_HEALTH"))
 	if err != nil {
 		log.Panicf("Failed to parse COWBOY_HEALTH env variable: %v", err)
@@ -119,10 +155,12 @@ func getReady() {
 	log.Printf("%s is now ready", cowboy.name)
 }
 
-func waitToStartShootout() {
-	for !cowboy.isInCombat {
-		log.Printf("%s is eagerly awaiting the shootout to begin", cowboy.name)
-		time.Sleep(150 * time.Millisecond)
+func waitForReadiness() {
+	for !cowboysReady {
+		time.Sleep(1 * time.Second)
+		if len(getRemainingCowboyIPs()) == len(listPods().Items) {
+			cowboysReady = true
+		}
 	}
 }
 
@@ -130,9 +168,8 @@ func shootout() {
 	for cowboy.health > 0 {
 		shoot()
 		time.Sleep(1000 * time.Millisecond)
-		if cowboy.isVictorious {
+		if isVictorious() {
 			log.Printf("%s is victorious! The fastest hand in the West.", cowboy.name)
-			time.Sleep(3600 * time.Second)
 			return
 		}
 	}
@@ -140,6 +177,7 @@ func shootout() {
 
 func main() {
 	getReady()
-	waitToStartShootout()
+	waitForReadiness()
 	shootout()
+	time.Sleep(3600 * time.Second)
 }

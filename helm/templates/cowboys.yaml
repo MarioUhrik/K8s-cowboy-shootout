@@ -10,6 +10,7 @@ metadata:
     microservice: cowboy
 spec:
   restartPolicy: Never
+  serviceAccountName: cowboy
   containers:
   - name: cowboy
     image: ghcr.io/mariouhrik/k8s-cowboy-shootout/cowboy:latest
@@ -51,3 +52,41 @@ spec:
   selector:
     app: k8s-cowboy-shootout
     microservice: cowboy
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cowboy
+  namespace: k8s-cowboy-shootout
+  labels:
+    app: k8s-cowboy-shootout
+    microservice: cowboy
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cowboy
+  namespace: k8s-cowboy-shootout
+  labels:
+    app: k8s-cowboy-shootout
+    microservice: cowboy
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cowboy
+  namespace: k8s-cowboy-shootout
+  labels:
+    app: k8s-cowboy-shootout
+    microservice: cowboy
+subjects:
+- kind: ServiceAccount
+  name: cowboy
+roleRef:
+  kind: Role
+  name: cowboy
+  apiGroup: rbac.authorization.k8s.io

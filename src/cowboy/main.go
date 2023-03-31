@@ -134,11 +134,12 @@ func getReady() {
 	go func() {
 		pb.RegisterCowboyServer(s, &server{})
 		healthServer = health.NewServer()
-		healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 		healthgrpc.RegisterHealthServer(s, healthServer)
 		if err := s.Serve(listener); err != nil {
 			log.Panicf("Failed to serve: %v", err)
 		}
+		time.Sleep(10 * time.Second) // wait a little while for the server to get initialized
+		healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 		<-triggerShutdown
 		s.GracefulStop()
 		listener.Close()

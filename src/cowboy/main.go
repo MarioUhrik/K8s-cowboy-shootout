@@ -165,7 +165,7 @@ func shootout() {
 		time.Sleep(1000 * time.Millisecond)
 		if isVictorious() {
 			log.Printf("%s is victorious! The fastest hand in the West.", cowboy.name)
-			return
+			time.Sleep(3600 * time.Second)
 		}
 	}
 }
@@ -174,5 +174,4 @@ func main() {
 	getReady()
 	waitForReadiness()
 	shootout()
-	time.Sleep(3600 * time.Second)
 }

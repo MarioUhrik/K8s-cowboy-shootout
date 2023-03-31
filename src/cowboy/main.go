@@ -12,7 +12,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	v1 "k8s.io/api/core/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -79,7 +78,7 @@ func isVictorious() bool {
 
 func die() {
 	log.Printf("%s is dead", cowboy.name)
-	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_NOT_SERVING)
+	healthServer.Shutdown()
 	time.Sleep(1 * time.Second) // avoid io timeout error on connections from other cowboys at this time
 	triggerShutdown <- "Shutting down the GRPC server"
 }
@@ -135,11 +134,12 @@ func getReady() {
 		pb.RegisterCowboyServer(s, &server{})
 		healthServer = health.NewServer()
 		healthgrpc.RegisterHealthServer(s, healthServer)
+		healthServer.Shutdown()
 		if err := s.Serve(listener); err != nil {
 			log.Panicf("Failed to serve: %v", err)
 		}
 		time.Sleep(10 * time.Second) // wait a little while for the server to get initialized
-		healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+		healthServer.Resume()
 		<-triggerShutdown
 		s.GracefulStop()
 		listener.Close()

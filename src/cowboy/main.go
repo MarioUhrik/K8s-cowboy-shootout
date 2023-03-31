@@ -29,6 +29,7 @@ type Cowboy struct {
 
 var cowboy Cowboy
 var s grpc.Server
+var healthServer *health.Server
 var triggerShutdown chan string
 
 func (s *server) GetShot(ctx context.Context, request *pb.GetShotRequest) (*pb.GetShotResponse, error) {
@@ -60,6 +61,8 @@ func (s *server) GetDeclaredVictorious(ctx context.Context, request *pb.GetDecla
 
 func die() {
 	log.Printf("%s is dead", cowboy.name)
+	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_NOT_SERVING)
+	time.Sleep(1 * time.Second) // avoid io timeout error on connections from other cowboys at this time
 	triggerShutdown <- "Shutting down the GRPC server"
 }
 
@@ -103,7 +106,7 @@ func getReady() {
 	s := grpc.NewServer()
 	go func() {
 		pb.RegisterCowboyServer(s, &server{})
-		healthServer := health.NewServer()
+		healthServer = health.NewServer()
 		healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
 		healthgrpc.RegisterHealthServer(s, healthServer)
 		if err := s.Serve(listener); err != nil {

@@ -23,5 +23,10 @@
     "name": "Philip",
     "health": 15,
     "damage": 1
+  },
+  "Mario": {
+    "name": "Mario",
+    "health": 20,
+    "damage": 2
   }
 }

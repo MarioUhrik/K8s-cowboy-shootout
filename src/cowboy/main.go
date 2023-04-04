@@ -136,12 +136,13 @@ func (self *Cowboy) getReady() {
 		if err := self.cowboyServer.Serve(listener); err != nil {
 			log.Panicf("Failed to serve: %v", err)
 		}
-		log.Printf("%s is now ready", self.name)
 
 		<-self.triggerShutdown
 		self.cowboyServer.GracefulStop()
 		listener.Close()
 	}()
+	time.Sleep(5 * time.Second)
+	log.Printf("%s is now ready", self.name)
 }
 
 func (self *Cowboy) waitForReadiness() {

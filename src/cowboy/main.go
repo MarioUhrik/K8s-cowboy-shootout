@@ -81,7 +81,8 @@ func (self *Cowboy) die() {
 }
 
 func (self *Cowboy) shoot() {
-	ctx, _ := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
 	conn, err := grpc.DialContext(ctx, "cowboys:8080", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Printf("Failed to Dial cowboy while shooting: %v", err)

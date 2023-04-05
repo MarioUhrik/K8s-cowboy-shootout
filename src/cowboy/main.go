@@ -75,8 +75,6 @@ func (self *Cowboy) isVictorious() bool {
 
 func (self *Cowboy) die() {
 	log.Printf("%s is dying", self.name)
-	self.healthServer.Shutdown()
-	time.Sleep(1 * time.Second) // avoid io timeout error on connections from other cowboys at this time
 	self.triggerShutdown <- "Shutting down the GRPC server"
 }
 
@@ -134,17 +132,23 @@ func (self *Cowboy) getReady() {
 		pb.RegisterCowboyServer(self.cowboyServer, self)
 		self.healthServer = health.NewServer()
 		healthgrpc.RegisterHealthServer(self.cowboyServer, self.healthServer)
-		if err := self.cowboyServer.Serve(listener); err != nil {
-			log.Panicf("Failed to serve: %v", err)
-		}
+		self.healthServer.SetServingStatus("", healthgrpc.HealthCheckResponse_NOT_SERVING)
+		go func() {
+			if err := self.cowboyServer.Serve(listener); err != nil {
+				log.Panicf("Failed to serve: %v", err)
+			}
+		}()
+		time.Sleep(7 * time.Second) // avoid the healthcheck being ready before the GetShot RPC
+		self.healthServer.Resume()
+		log.Printf("%s is now ready", self.name)
 
 		<-self.triggerShutdown
+		self.healthServer.Shutdown()
+		time.Sleep(1 * time.Second) // avoid io timeout error on connections from other cowboys at this time
 		self.cowboyServer.GracefulStop()
 		listener.Close()
 		log.Printf("%s is dead", self.name)
 	}()
-	time.Sleep(5 * time.Second)
-	log.Printf("%s is now ready", self.name)
 }
 
 func (self *Cowboy) waitForReadiness() {

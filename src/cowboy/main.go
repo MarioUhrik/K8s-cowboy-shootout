@@ -44,7 +44,8 @@ func (self *Cowboy) GetShot(ctx context.Context, request *pb.GetShotRequest) (*p
 	self.health = self.health - request.IncomingDamage
 	log.Printf("%s has %d health left", self.name, self.health)
 	if self.health <= 0 {
-		self.die()
+		log.Printf("%s is dead", self.name)
+		self.triggerShutdown <- "Shutting down the GRPC server"
 	}
 
 	return &pb.GetShotResponse{VictimName: self.name, RemainingHealth: self.health}, nil
@@ -67,15 +68,6 @@ func (self *Cowboy) getRemainingCowboyIPs() []string {
 		}
 	}
 	return podIPs
-}
-
-func (self *Cowboy) isVictorious() bool {
-	return self.health > 0 && len(self.getRemainingCowboyIPs()) == 1
-}
-
-func (self *Cowboy) die() {
-	log.Printf("%s is dying", self.name)
-	self.triggerShutdown <- "Shutting down the GRPC server"
 }
 
 func (self *Cowboy) shoot() {
@@ -146,7 +138,6 @@ func (self *Cowboy) getReady() {
 		self.healthServer.Shutdown()
 		self.cowboyServer.GracefulStop()
 		listener.Close()
-		log.Printf("%s is dead", self.name)
 	}()
 }
 
@@ -164,7 +155,7 @@ func (self *Cowboy) shootout() {
 	for self.health > 0 {
 		self.shoot()
 		time.Sleep(1000 * time.Millisecond)
-		if self.isVictorious() {
+		if self.health > 0 && len(self.getRemainingCowboyIPs()) == 1 {
 			log.Printf("%s is victorious! The fastest hand in the West.", self.name)
 			time.Sleep(3600 * time.Second)
 		}

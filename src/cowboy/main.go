@@ -144,7 +144,6 @@ func (self *Cowboy) getReady() {
 
 		<-self.triggerShutdown
 		self.healthServer.Shutdown()
-		time.Sleep(1 * time.Second) // avoid io timeout error on connections from other cowboys at this time
 		self.cowboyServer.GracefulStop()
 		listener.Close()
 		log.Printf("%s is dead", self.name)

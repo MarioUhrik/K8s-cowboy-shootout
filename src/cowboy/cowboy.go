@@ -1,4 +1,4 @@
-package main
+package cowboy
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	pb "github.com/MarioUhrik/K8s-cowboy-shootout/src/proto/pb"
+	pb "cowboy/cowboy/proto/pb"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
@@ -166,9 +167,4 @@ func (self *Cowboy) Run() {
 	self.getReady()
 	self.waitForReadiness()
 	self.shootout()
-}
-
-func main() {
-	cowboy := Cowboy{}
-	cowboy.Run()
 }

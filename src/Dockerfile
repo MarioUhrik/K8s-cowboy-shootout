@@ -6,10 +6,10 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 
-COPY *.go ./
+COPY . ./
 
-RUN go build -o /app
+RUN go build -o app
 
 EXPOSE 8080
 
-CMD [ "/app/cowboy" ]
+CMD [ "/app/app" ]

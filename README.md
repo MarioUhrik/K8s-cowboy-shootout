@@ -1,6 +1,6 @@
 ### K8s-cowboy-shootout
-Go/GRPC/K8s simulation of a wild west shootout between 2 or more cowboys.
-Each cowboy is a standalone pod, shooting at the others via GRPC.
+Go/GRPC/K8s simulation of a wild west shootout between 2 or more cowboys. \
+Each cowboy is a distributed standalone pod, shooting at the others via GRPC.
 
 ![Architectural Diagram](k8s-cowboy-shootout.png)
 

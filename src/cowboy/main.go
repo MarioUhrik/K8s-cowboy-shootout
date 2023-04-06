@@ -52,7 +52,7 @@ func (self *Cowboy) GetShot(ctx context.Context, request *pb.GetShotRequest) (*p
 }
 
 func (self *Cowboy) listPods() *v1.PodList {
-	listOptions := meta_v1.ListOptions{LabelSelector: "microservice=cowboy"}
+	listOptions := meta_v1.ListOptions{LabelSelector: "app.kubernetes.io/name=cowboy"}
 	podList, err := self.k8sClientset.CoreV1().Pods(self.namespace).List(context.TODO(), listOptions)
 	if err != nil {
 		log.Panicf("Failed to list the cowboy pods: %v", err)

@@ -162,9 +162,13 @@ func (self *Cowboy) shootout() {
 	}
 }
 
+func (self *Cowboy) Run() {
+	self.getReady()
+	self.waitForReadiness()
+	self.shootout()
+}
+
 func main() {
 	cowboy := Cowboy{}
-	cowboy.getReady()
-	cowboy.waitForReadiness()
-	cowboy.shootout()
+	cowboy.Run()
 }
